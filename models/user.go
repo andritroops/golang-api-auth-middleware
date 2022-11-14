@@ -15,13 +15,13 @@ type GetUser struct {
 	UpdatedAt   time.Time `json:"updated_at"`
 }
 
-type ValidateUser struct {
-	ID          int32     `gorm:"primaryKey" json:"id"`
-	Name        string    `gorm:"type:varchar(191)" json:"name" form:"name" validate:"required,min=3,max=32"`
-	PhoneNumber string    `gorm:"type:varchar(13)" json:"phone_number" form:"phone_number" validate:"required,min=9,max=13"`
-	Email       string    `gorm:"type:varchar(191)" json:"email" form:"email" validate:"required,email,min=6,max=32"`
-	CreatedAt   time.Time `json:"created_at"`
-	UpdatedAt   time.Time `json:"updated_at"`
+type UserCreateRequest struct {
+	Name        string    `gorm:"type:varchar(191)" form:"name" validate:"required,min=3,max=32"`
+	PhoneNumber string    `gorm:"type:varchar(13)" form:"phone_number" validate:"required,min=9,max=13"`
+	Email       string    `gorm:"type:varchar(191)" form:"email" validate:"required,email,min=6,max=32"`
+	Password    string    `gorm:"type:varchar(191)" form:"password" validate:"required"`
+	CreatedAt   time.Time `gorm:"type:timestamp"`
+	UpdatedAt   time.Time `gorm:"type:timestamp"`
 }
 
 type ErrorResponse struct {
@@ -32,7 +32,7 @@ type ErrorResponse struct {
 
 var validate = validator.New()
 
-func ValidateStruct(user ValidateUser) []*ErrorResponse {
+func ValidateStruct(user UserCreateRequest) []*ErrorResponse {
 	var errors []*ErrorResponse
 	err := validate.Struct(user)
 	if err != nil {
