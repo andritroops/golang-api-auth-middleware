@@ -69,7 +69,8 @@ func Signin(ctx *fiber.Ctx) error {
 	claims["name"] = user.Name
 	claims["phone_number"] = user.PhoneNumber
 	claims["email"] = user.Email
-	claims["exp"] = time.Now().Add(time.Minute * 2).Unix()
+	claims["exp"] = time.Now().Add(time.Minute * 60).Unix()
+	claims["role"] = user.Role
 
 	token, errGenerateToken := utils.GenerateToken(&claims)
 

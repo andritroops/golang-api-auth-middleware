@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"fmt"
 	"log"
 
 	"github.com/andritroops/go-latihan/config"
@@ -52,10 +53,49 @@ func UserStore(ctx *fiber.Ctx) error {
 		return ctx.Status(fiber.StatusBadRequest).JSON(errors)
 	}
 
+	// Handle File
+	// file, errFile := ctx.FormFile("photo")
+
+	// if errFile != nil {
+	// 	log.Println("Error file =", errFile)
+	// }
+
+	// var filename string
+	// var filepath string
+
+	// if file != nil {
+	// 	filename = file.Filename
+	// 	filepath = "/public/images/"
+
+	// 	errSaveFile := ctx.SaveFile(file, fmt.Sprintf("./public/images/%s", filename))
+
+	// 	if errSaveFile != nil {
+	// 		log.Println("Failed to store into public/images directory.")
+	// 	}
+
+	// } else {
+	// 	log.Println("Nothing file to be upload.")
+	// }
+
+	var filenameString string
+
+	filename := ctx.Locals("filename")
+
+	if filename == nil {
+
+		return ctx.Status(422).JSON(fiber.Map{
+			"message": "File is required",
+		})
+	} else {
+		filenameString = fmt.Sprintf("%v", filename)
+	}
+
 	newUser := entity.User{
 		Name:        user.Name,
 		Email:       user.Email,
 		PhoneNumber: user.PhoneNumber,
+		Role:        user.Role,
+		File:        filenameString,
 	}
 
 	hashedPassword, err := utils.HashPassword(user.Password)
