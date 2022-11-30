@@ -1,9 +1,6 @@
 package controllers
 
 import (
-	"fmt"
-	"log"
-
 	"github.com/andritroops/go-latihan/config"
 	"github.com/andritroops/go-latihan/models/entity"
 	"github.com/andritroops/go-latihan/models/request"
@@ -39,7 +36,7 @@ func CategoryStore(ctx *fiber.Ctx) error {
 		return ctx.Status(fiber.StatusBadRequest).JSON(errors)
 	}
 
-	var filenameString string
+	// var filenameString string
 
 	filenames := ctx.Locals("filenames")
 
@@ -49,28 +46,32 @@ func CategoryStore(ctx *fiber.Ctx) error {
 			"message": "File is required",
 		})
 	} else {
-		filenameString = fmt.Sprintf("%v", filenames)
+		// filenameString = fmt.Sprintf("%v", filenames)
+
+		filenamesData := filenames.([]string)
+
+		for _, filename := range filenamesData {
+
+			newCategory := entity.Category{
+				Name: category.Name,
+				File: filename,
+			}
+
+			errCreateCategory := config.DB.Create(&newCategory).Error
+
+			if errCreateCategory != nil {
+
+				return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+					"message": errCreateCategory,
+				})
+			}
+		}
 	}
 
-	newCategory := entity.Category{
-		Name: category.Name,
-		File: filenameString,
-	}
-
-	errCreateCategory := config.DB.Create(&newCategory).Error
-
-	if errCreateCategory != nil {
-
-		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"message": errCreateCategory,
-		})
-	}
-
-	log.Println(filenameString)
+	// log.Println(filenameString)
 
 	return ctx.Status(fiber.StatusOK).JSON(fiber.Map{
 		"message": "success",
-		"data":    newCategory,
 	})
 
 }

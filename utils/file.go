@@ -62,7 +62,7 @@ func HandleMultipleFIle(ctx *fiber.Ctx) error {
 
 		if file != nil {
 
-			filename = fmt.Sprintf("%s-%d", file.Filename, i)
+			filename = fmt.Sprintf("%d-%s", i, file.Filename)
 
 			errSaveFile := ctx.SaveFile(file, fmt.Sprintf("./public/images/%s", filename))
 
