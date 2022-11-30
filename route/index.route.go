@@ -14,4 +14,6 @@ func Route(route *fiber.App) {
 	route.Get("/api/users/:id", middleware.Auth, middleware.Role, controllers.UserEdit)
 	route.Put("/api/users/:id", middleware.Auth, middleware.Role, controllers.UserUpdate)
 	route.Delete("/api/users/:id", middleware.Auth, middleware.Role, controllers.UserDelete)
+
+	route.Post("/api/categories", middleware.Auth, middleware.Role, utils.HandleMultipleFIle, controllers.CategoryStore)
 }

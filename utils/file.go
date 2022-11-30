@@ -42,3 +42,46 @@ func HandleSingleFIle(ctx *fiber.Ctx) error {
 	return ctx.Next()
 
 }
+
+func HandleMultipleFIle(ctx *fiber.Ctx) error {
+
+	form, errForm := ctx.MultipartForm()
+
+	if errForm != nil {
+
+		log.Println("Error read multipart form request", errForm)
+	}
+
+	files := form.File["files"]
+
+	var filenames []string
+
+	for i, file := range files {
+
+		var filename string
+
+		if file != nil {
+
+			filename = fmt.Sprintf("%s-%d", file.Filename, i)
+
+			errSaveFile := ctx.SaveFile(file, fmt.Sprintf("./public/images/%s", filename))
+
+			if errSaveFile != nil {
+				log.Println("Failed to store into public/images directory.")
+			}
+
+		} else {
+			log.Println("Nothing file to be upload.")
+
+		}
+
+		if filename != "" {
+			filenames = append(filenames, filename)
+		}
+
+	}
+
+	ctx.Locals("filenames", filenames)
+
+	return ctx.Next()
+}
